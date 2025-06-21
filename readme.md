@@ -5,7 +5,7 @@ Script Python para simular batalhas entre personagens utilizando a API Gemini AI
 ## Requisitos
 
 - Python 3.8+
-- [Google Generative AI Python SDK](https://github.com/google/generative-ai-python)
+- [Gemini - Generative AI Python](https://ai.google.dev/gemini-api/docs/quickstart?hl=pt-br)
 - Arquivo `config.py` com a variável `API_KEY` definida.
 
 ## Instalação
@@ -17,7 +17,7 @@ pip install -q -U google-genai
 Arquivo `config.py`:
 
 ```python
-API_KEY = "SUA_CHAVE_API_AQUI"
+API_KEY = "SUA_CHAVE_API"
 ```
 
 ## Funções Principais
