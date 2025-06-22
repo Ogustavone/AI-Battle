@@ -46,10 +46,9 @@ def generate_battle(characters:list, turns:int=4, words_limit:int=100, language:
     return conversation[1:]
 
 def main():
-    names = []
-    rules = []
-    names[0] = input("Digite o nome do primeiro personagem: ")
-    names[1] = input("Digite o nome do segundo personagem: ")
+    input1 = input("Digite o nome do primeiro personagem: ")
+    input2 = input("Digite o nome do segundo personagem: ")
+    names = [input1, input2]
 
     response = generate_battle(names)
     utils.dynamic_read(response)
