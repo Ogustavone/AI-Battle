@@ -20,9 +20,8 @@ Editar arquivo `client.py`:
 ```python
 from google import genai
 
-API_KEY = "YOUR_API_KEY"
 AI = genai.Client(
-    api_key=API_KEY
+    api_key="YOUR_API_KEY"
 )
 ```
 
