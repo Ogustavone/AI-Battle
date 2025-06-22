@@ -35,15 +35,18 @@ def generate_battle(characters:list, turns:int=4, words_limit:int=100, language:
                 f"You can only use {words_limit} words.", 
                 f"Answer in {language} language.",
                 "You need to imitate your character's speaking style.",
-                "Your answer needs to be directioned to your oponent.",
-                "User_rules have maximum precedence."
+                "Avoid redundancy; if a point was already made, confirm or expand naturally without repeating."
+                "Never reuse phrases or structures from past turns. If a concept was mentioned before, rephrase it uniquely or add new tactical depth.",
+                "Don't use markdown or html tags.",
+                "Never use line breaks. Respond in a single paragraph."
+                "User_rules have maximum precedence.",
             ],
             "user_rules": rules,
             "oponent": oponent,
             "all_conversation": conversation,
             "last_content": conversation[-1],
             "role":"system",
-            "content": f"{current_char}, now it's your turn to attack!"
+            "content": f"{current_char}, It's your turn. Describe your next move."
         }
         response = client.request_completion(prompt)
         conversation.append({"role": current_char, "content": response})
