@@ -1,15 +1,13 @@
-from google import genai
-import config, time, json
+import client, utils
 
-Client_AI = genai.Client(api_key= config.API_KEY)
-
-def new_battle(characters: list, turns:int=4, words_limit:int=100, language:str="EN-US"):
+def generate_battle(characters:list, turns:int=4, words_limit:int=100, language:str="PT-BR", rules:list = []):
     """Starts a new battle between two characters, alternating attack and defense turns.
     Args:
         characters (list): List of character names
-        turns (int, optional): Number of battle turns. Default is 2.
+        turns (int, optional): Number of battle turns. Default is 4.
         words_limit (int, optional): Word limit per response. Default is 100.
-        language (str, optional): Response language. Default is "EN-US".
+        language (str, optional): Response language. Default is "PT-BR".
+        rules (list, optional): Sets new rules for the battle characters.
     Returns:
         list: List of dictionaries representing the battle conversation.
     Raises:
@@ -25,68 +23,37 @@ def new_battle(characters: list, turns:int=4, words_limit:int=100, language:str=
     conversation = [
         {
             "role": "system",
-            "content": "You are in a battle. In each turn, describe and return only your attack or defense move, without extra explanations."
+            "content": "You are in a battle. In each turn, describe and return your attack or defense move."
         }
     ]
     for i in range(turns):
         print(f"Requesting turn {i+1}")
         current_char = chars[i % 2]
         prompt = {
-            "agent_rules": [f"You can only use {words_limit} words.", f"answer in {language} language."],
+            "agent_rules": [
+                f"You can only use {words_limit} words.", 
+                f"Answer in {language} language.",
+                "You need to imitate your character's speaking style.",
+                rules
+            ],
             "all_conversation": conversation,
             "last_content": conversation[-1],
             "role":"system",
-            "content": f"{current_char}, it's your turn to attack! Describe your move."
+            "content": f"{current_char}, now it's your turn to attack!"
         }
-        move = request_completion(prompt)
-        conversation.append({"role": current_char, "content": move})
-    return conversation
-
-def request_completion(prompt):
-    """
-    Generates a response for a prompt using the Gemini AI model.
-    Args:
-        prompt (str): The input prompt to be sent to the AI model for content generation.
-    Returns:
-        response.text: The generated content returned by the AI model.
-    **Note**: This function introduces a 5-second delay before making the request.
-    """
-    time.sleep(5)
-    response = Client_AI.models.generate_content(
-        model="gemini-2.0-flash-lite",
-        contents=str(prompt)
-    )
-    return response.text
-
-def dinamic_print(conversation: list):
-    """Prints each message in a conversation with a dynamic, character-by-character effect.
-    Args:
-        conversation (list): A list of dictionaries, where each dictionary 
-            represents a message with at least the keys "role" (str) and "content" (str).
-    """
-    for message in conversation:
-        print(f"{message['role']}: ")
-        for char in message["content"]:
-            print(char, end='', flush=True)
-            time.sleep(0.06)
-        print("\n")
-        time.sleep(0.5)
-
-
-def save_file(names: list, conversation: list):
-    filename = f"{names[0]}_vs_{names[1]}.json"
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(conversation[1:], f, ensure_ascii=False, indent=2)
-    print(f"\n\nFile saved as {filename}")
+        response = client.request_completion(prompt)
+        conversation.append({"role": current_char, "content": response})
+    return conversation[1:]
 
 def main():
-    person1 = input("First character name: ")
-    person2 = input("Second character name: ")
+    names = []
+    rules = []
+    names[0] = input("Digite o nome do primeiro personagem: ")
+    names[1] = input("Digite o nome do segundo personagem: ")
 
-    names = [person1, person2]
-    conversation = new_battle(characters=names,turns=2, language="PT-BR")
-    #dinamic_print(conversation)  # Optional
-    save_file(names, conversation)
+    response = generate_battle(names)
+    utils.dynamic_read(response)
 
 if __name__ == "__main__":
     main()
+    pass
