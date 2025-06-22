@@ -29,13 +29,17 @@ def generate_battle(characters:list, turns:int=4, words_limit:int=100, language:
     for i in range(turns):
         print(f"Requesting turn {i+1}")
         current_char = chars[i % 2]
+        oponent = chars[(i + 1) % 2]
         prompt = {
             "agent_rules": [
                 f"You can only use {words_limit} words.", 
                 f"Answer in {language} language.",
                 "You need to imitate your character's speaking style.",
-                rules
+                "Your answer needs to be directioned to your oponent.",
+                "User_rules have maximum precedence."
             ],
+            "user_rules": rules,
+            "oponent": oponent,
             "all_conversation": conversation,
             "last_content": conversation[-1],
             "role":"system",
@@ -46,6 +50,7 @@ def generate_battle(characters:list, turns:int=4, words_limit:int=100, language:
     return conversation[1:]
 
 def main():
+    utils.clear_terminal()
     input1 = input("Digite o nome do primeiro personagem: ")
     input2 = input("Digite o nome do segundo personagem: ")
     names = [input1, input2]
